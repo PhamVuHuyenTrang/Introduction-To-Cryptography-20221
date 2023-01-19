@@ -10,7 +10,7 @@ def binaryToDecimal(binary):
         i += 1
     return decimal
 
-def xor_cypher(st, key):
+def xor_cipher(st, key):
     originaltext_characters = list(st)
     
     encrypted_characters = []
