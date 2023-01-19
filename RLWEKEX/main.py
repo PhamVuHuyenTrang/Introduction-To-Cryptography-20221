@@ -1,9 +1,32 @@
-from RLWEKEX import *
+import re
+def binaryToDecimal(binary):
+     
+    decimal, i = 0, 0
+    while(binary != 0):
+        dec = binary % 10
+        decimal = decimal + dec * pow(2, i)
+        binary = binary//10
+        i += 1
+    return decimal
+
+def xor_cypher(st, key):
+    originaltext_characters = list(st)
+    
+    encrypted_characters = []
+    for character in originaltext_characters:
+        ascii_original_value = ord(character)
+        ascii_encrypted_value = key^ascii_original_value
+        encrypted_character = chr(ascii_encrypted_value)
+        encrypted_characters.append(encrypted_character)
+    return ''.join(encrypted_characters)
+
 
 print("ONE PASS KEY EXCHANGE:")
-
+q = int(input("Enter the value of q: "))
+n = int(input("Enter the value of n: "))
+b = int(input("Enter the value of b: "))
 print("Alice: Key generation")
-alice = RLWE_KEX(q=3079, n=32, b=5)
+alice = RLWE_KEX(q, n, b)
 print("\tsA:", alice.s)
 print("\teA:", alice.e)
 alice_public, alice_a = alice.calculate_public() # pA = aA.sA + 2eA
@@ -12,7 +35,7 @@ print("\tpA:", alice_public)
 print()
 
 print("Bob: Key generation")
-bob = RLWE_KEX(q=3079, n=32, b=5, a=alice_a)
+bob = RLWE_KEX(q, n, b, a=alice_a)
 print("\tsB:", bob.s)
 print("\teB:", bob.e)
 bob_public, bob_a = bob.calculate_public() # pB = aB.sB + 2eB
@@ -39,3 +62,15 @@ print()
 print("Finish!")
 print("\tskA:", alice.get_key_stream())
 print("\tskB:", bob.get_key_stream())
+key_list = [int(x) for x in alice.get_key_stream().tolist()]
+
+#Encryption and decryption using XOR cypher
+print("ENCRYPTION AND DECRYPTION USING XOR CIPHER")
+key_list = [str(int(x)) for x in alice.get_key_stream().tolist()]
+key = binaryToDecimal(int(''.join(key_list)))
+string = input("Enter String: ")
+encrypted = xor_cypher(string, key)
+decrypted = xor_cypher(encrypted, key)
+print("Original text: " + string)
+print("Encrypted text: " + encrypted)
+print("Decrypted text: " + decrypted)
