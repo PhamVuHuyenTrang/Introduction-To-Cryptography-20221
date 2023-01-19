@@ -1,3 +1,4 @@
+from RLWEKEX import *
 import re
 def binaryToDecimal(binary):
      
