@@ -190,9 +190,8 @@ class RLWE_KEX:
 
         return self.sk
 
-if __name__ == "__main__":
-    alice = RLWE_KEX(q=257, n=8, b=5)
-    a = Polynomial((7,-105,87,-3,-57,33,69,-15))
-    s = Polynomial((1,3,2,-5,0,0,3,2))
+alice = RLWE_KEX(q=257, n=8, b=5)
+    a = Polynomial((-15,69,33,-57,-3,87,-105,7))
+    s = Polynomial((2,3,0,0,-5,2,3,1))
     print(a*s)
     print(alice.multiply(a, s, 257))
