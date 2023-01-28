@@ -49,20 +49,17 @@ class RLWE_KEX:
         #                polynomial ring
         #         Output: reduced_poly - polynomial with terms reduced into the ring
 
-        #indx = 0
         reduced_poly = np.zeros(self.n)
         a = poly.coef
-        #print(a)
+   
         # Initialize the first n values
-        for i in range(-1, -self.n-1,-1):
+        for i in range(0, self.n):
             reduced_poly[i] = a[i]
-        #print(reduced_poly)
+    
         # Now iterate over the values of a higher degree and put them back where they belong
         for i in range(0, self.n-1):
-            reduced_poly[i+1] = reduced_poly[i+1] - a[i]
-            #indx = indx + 1
-            #if indx >= self.n:
-            #    indx = 0
+            if i + self.n < a.shape[0]:
+                reduced_poly[i] = reduced_poly[i] - a[i+self.n]
         return Polynomial(reduced_poly)
 
     def reduce_coefficients(self, poly, mod_val):
@@ -113,7 +110,6 @@ class RLWE_KEX:
         mul_result = poly1 * poly2
         # Reduce terms of a higher degree than what is included in the ring
         mul_result = self.reduce_back_into_ring(mul_result)
-        #print(mul_result)
         # Reduce the coefficients mod q
         mul_result = self.reduce_coefficients(mul_result, mod_val)
         return mul_result
