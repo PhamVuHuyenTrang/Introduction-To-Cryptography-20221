@@ -109,6 +109,9 @@ class KEXProtocol(RLWE_KEX):
             key = binaryToDecimal(int(''.join(key_list)))
             encrypted = xor_cipher(plain_text, key)
             decrypted = xor_cipher(encrypted, key)
+            print("Original text: " + plain_text)
+            print("Encrypted text: " + encrypted)
+            print("Decrypted text: " + decrypted)
 
     def attack(self, a_=None, s_B_=None, e_B_=None, custom=True):
         # From the last exchange, we got p_B be calculated
