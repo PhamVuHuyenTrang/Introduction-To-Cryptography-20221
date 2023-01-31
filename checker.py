@@ -13,9 +13,14 @@ class Checker:
         for sk in self.sk_list[1:]:
             accept = self.compare_key(sk_0, sk)
             if not accept:
+                self.flush()
                 return 0
+        self.flush()
         return 1
 
     def compare_key(self, k_a, k_b):
         c = k_a == k_b
         return c.all()
+
+    def flush(self):
+        self.sk_list = list()

@@ -9,9 +9,10 @@ def main():
     e_B = Polynomial((-1, -5, 0, 2, -3, 3, 0, 3))
     e_A = Polynomial((-1, 0, 0, 0, 0, 0, 0, 1))
     s_A = Polynomial((0, 0, 0, 0, 0, 0, 0, 0))
-    accept = proto.key_exchange(a=a, s_A=s_A, s_B=s_B, e_B=e_B, e_A=e_A, g_B_used=False, flip=True)
-    print("Accept share key:", accept)
-
+    # # Check key exchange protocol
+    # accept = proto.key_exchange(a=a, s_A=s_A, s_B=s_B, e_B=e_B, e_A=e_A, g_B_used=False)
+    # print("Accept share key:", accept)
+    proto.attack(a, s_B, e_B, custom=True)
 
 if __name__ == "__main__":
     main()

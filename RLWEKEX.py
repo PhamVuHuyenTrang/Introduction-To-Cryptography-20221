@@ -104,7 +104,7 @@ class RLWE_KEX:
             a[i] = b_list[rand_indx]
         return Polynomial(a)
 
-    def generate_signal(self, k, flip=False):
+    def generate_signal(self, k):
         # This method generates the 'signal' to be used in the reconciliation function.
 
         # Params: Input: this_poly - polynomial to be used as input to the function
@@ -117,7 +117,6 @@ class RLWE_KEX:
         for i in range(0, w_out.shape[0]):
             if w[i] >= low_bound and w[i] <= up_bound:
                 w_out[i] = 0
-        w_out[-1] = 1 if flip is True else w_out[-1]
         w = Polynomial(w_out)
         return w
 
@@ -129,24 +128,27 @@ class RLWE_KEX:
 
         q_scalar = ((self.q - 1) / 2)
         multiply_w = Polynomial(w.coef * q_scalar)
-        print('k using:', k)
-        print('multiply_w using:', w)
         ret_skr = self.add(k, multiply_w, self.q)
         return ret_skr.coef % 2
 
-    def calculate_public(self, a, s, e):
+    def calculate_public(self, a, s, e=None):
         # This method calculates the public value of a party in the key exchange. It also returns the shared
         # value 'a' to allow it to be provided to the other party in the exchange.
         # Calculation for the public_value = sa + 2e
         # Params: Output: p - public value polynomial
         #                 a - public value shared between parties in the exchange
-        p = self.add(self.multiply(a, s, self.q), Polynomial((2 * e.coef)), self.q)
-        return p
+        if e is not None:
+            return self.add(self.multiply(a, s, self.q), Polynomial((2 * e.coef)), self.q)
+        else:
+            return self.multiply(a, s, self.q)
 
-    def calculate_private(self, p_in, s, g):
+    def calculate_private(self, p_in, s, g=None):
         # This method calculates the private value of a party in the key exchange.
         # Calculation for the private value = sp_in + 2e1
         # Params: Input: p_in - public value polynomial of other participant in the exchange
-        return self.add(self.multiply(p_in, s, self.q), Polynomial((2 * g.coef)), self.q)
+        if g is not None:
+            return self.add(self.multiply(p_in, s, self.q), Polynomial((2 * g.coef)), self.q)
+        else:
+            return self.multiply(p_in, s, self.q)
 
 
