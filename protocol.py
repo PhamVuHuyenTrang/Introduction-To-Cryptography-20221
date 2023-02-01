@@ -5,6 +5,7 @@ from numpy.polynomial import Polynomial
 import random
 from checker import Checker
 from cipher import *
+from sample_gauss import *
 from scipy.stats import shapiro
 
 
