@@ -2,7 +2,6 @@ from RLWEKEX import *
 from utils import *
 import numpy as np
 from numpy.polynomial import Polynomial
-import random
 from checker import Checker
 from cipher import *
 from sample_gauss import *
@@ -94,7 +93,7 @@ class KEXProtocol(RLWE_KEX):
         return Polynomial(a)
         # return np.random.randint(-int(self.q / 2) - 1, int(self.q / 2), size=self.n)
 
-    def discrete_gaussian(self):  # TODOO
+    def discrete_gaussian(self):
         a = np.zeros(self.n)
         for i in range(self.n):
             sigma2 = self.sigma ** 2
