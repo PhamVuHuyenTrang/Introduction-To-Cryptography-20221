@@ -10,7 +10,7 @@ from scipy.stats import shapiro
 
 class KEXProtocol(RLWE_KEX):
     def __init__(self, n, q, thres=100):
-        super().__init__(q, n, b=None)
+        super().__init__(q, n, sigma=1)
         self.a = self.shake128()
         self.s_A = self.discrete_gaussian()
         self.s_B = self.discrete_gaussian()
@@ -94,12 +94,11 @@ class KEXProtocol(RLWE_KEX):
         # return np.random.randint(-int(self.q / 2) - 1, int(self.q / 2), size=self.n)
 
     def discrete_gaussian(self):  # TODOO
-        b_list = [5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5]
-
         a = np.zeros(self.n)
-        for i in range(0, self.n):
-            rand_indx = random.randint(0, 9)
-            a[i] = b_list[rand_indx]
+        for i in range(self.n):
+            sigma2 = self.sigma ** 2
+            coeff=sample_dgauss(sigma2)
+            a[i] = coeff
         return Polynomial(a)
         # return np.random.randint(-int(self.q / 2) - 1, int(self.q / 2), size=self.n)
 
