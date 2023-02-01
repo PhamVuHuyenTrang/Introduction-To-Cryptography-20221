@@ -3,7 +3,7 @@ from numpy.polynomial import Polynomial
 
 
 def main():
-    proto = KEXProtocol(n=8, q=257)
+    proto = KEXProtocol(n=8, q=257, sigma=1)
     # proto = KEXProtocol(n=101, q=257)
     a = Polynomial((-15, 69, 33, -57, -3, 87, -105, 7))
     s_B = Polynomial((2, 3, 0, 0, -5, 2, 3, 1))
@@ -11,7 +11,6 @@ def main():
     e_A = Polynomial((-1, 0, 0, 0, 0, 0, 0, 1))
     s_A = Polynomial((0, 0, 0, 0, 0, 0, 0, 0))
     # # Check key exchange protocol
-    # accept = proto.key_exchange(a=a, s_A=s_A, s_B=s_B, e_B=e_B, e_A=e_A, g_B_used=False)
     accept = proto.key_exchange()
     print("Accept share key:", accept)
     #proto.attack(a, s_B, e_B, custom=True)
