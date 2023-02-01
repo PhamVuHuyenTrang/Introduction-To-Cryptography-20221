@@ -87,11 +87,7 @@ class KEXProtocol(RLWE_KEX):
         self.third_party = Checker()
 
     def shake128(self):  # TODOO
-        a = np.zeros(self.n)
-        for i in range(0, self.n):
-            a[i] = random.randint(0, self.q)
-        return Polynomial(a)
-        # return np.random.randint(-int(self.q / 2) - 1, int(self.q / 2), size=self.n)
+        return Polynomial(np.random.randint(-int(self.q / 2) - 1, int(self.q / 2), size=self.n))
 
     def discrete_gaussian(self):
         a = np.zeros(self.n)
@@ -167,9 +163,10 @@ class KEXProtocol(RLWE_KEX):
         # Step 2: Determine j such that s_B[j] = +-1
         ## Assuming j=f, we calculate remained positions of s_B
         stop = False
-        j_list = iter(np.array(range(len(sign_output)))[sign_output != -1])
+        j_list = np.array(range(len(sign_output)))[sign_output != -1]
+        id = 0
         while not stop:
-            j = next(j_list)
+            j = j_list[id]
             s_B_iter = Polynomial(s_B_pred.coef)
             s_B_iter.coef[j] = 1
             for i in range(self.n):
@@ -211,12 +208,13 @@ class KEXProtocol(RLWE_KEX):
                 if p_value > 0.05:
                     stop = True
                     s_B_pred = s_B_iter
-                elif j == self.n - 1:
+                elif id == j_list.shape[0]-1:
                     stop = True
                     j = -1
-            if j == self.n - 1:
+            if id == j_list.shape[0]-1:
                 stop = True
                 s_B_pred = s_B_iter
+            id += 1
         if j == -1:
             print("Cannot find j such that s_B[j] = +-1")
         else:

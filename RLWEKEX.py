@@ -31,7 +31,8 @@ class RLWE_KEX:
                 if i + self.n < a.shape[0]:
                     reduced_poly[i] = reduced_poly[i] - a[i+self.n]
             return Polynomial(reduced_poly)
-        return poly
+        else:
+            return Polynomial(np.append(poly.coef, np.zeros(self.n-poly.coef.shape[0])))
 
     def reduce_coefficients(self, poly, mod_val):
         # This method reduces polynomial coefficients back into the ring. Everywhere else, this is referred to
