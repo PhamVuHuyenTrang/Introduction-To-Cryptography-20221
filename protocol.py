@@ -9,8 +9,8 @@ from scipy.stats import shapiro
 
 
 class KEXProtocol(RLWE_KEX):
-    def __init__(self, n, q, thres=100):
-        super().__init__(q, n, sigma=1)
+    def __init__(self, n, q, sigma=1, thres=100):
+        super().__init__(q, n, sigma=sigma)
         self.a = self.shake128()
         self.s_A = self.discrete_gaussian()
         self.s_B = self.discrete_gaussian()
