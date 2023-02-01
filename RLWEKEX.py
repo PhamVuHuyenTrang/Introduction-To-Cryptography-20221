@@ -1,8 +1,6 @@
 from numpy.polynomial import Polynomial
 import numpy as np
-from distribution import sample_dgauss
-
-
+from sample_gauss import *
 class RLWE_KEX:
     def __init__(self, q, n, sigma, a=None):
         self.sigma = sigma
@@ -86,6 +84,20 @@ class RLWE_KEX:
         # Reduce the coefficients mod q
         mul_result = self.reduce_coefficients(mul_result, mod_val)
         return mul_result
+
+    def get_random_poly(self):
+        # This method generates a random polynomial of highest degree n-1 with small coefficients between
+        # b and -b. Currently hardcoded to b=5.
+
+        # NOTE: We use discrete Gauss sample these coefficients.
+
+        # Params: Output : a - generated polynomial
+        a = np.zeros(self.n)
+        for i in range(self.n):
+            sigma2 = self.sigma ** 2
+            coeff=sample_dgauss(sigma2)
+            a[i] = coeff
+        return Polynomial(a)
 
     def generate_signal(self, k):
         # This method generates the 'signal' to be used in the reconciliation function.
