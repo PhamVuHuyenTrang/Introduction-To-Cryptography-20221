@@ -9,12 +9,14 @@ from scipy.stats import shapiro
 
 
 class KEXProtocol(RLWE_KEX):
-    def __init__(self, n, q, sigma=1, thres=100):
+    def __init__(self, n, q, sigma=1, thres=100, accept_k=0.05, accept_s=0.05):
         super().__init__(q, n, sigma=sigma)
         self.a = self.shake128()
         self.s_A = self.discrete_gaussian()
         self.s_B = self.discrete_gaussian()
         self.DISTRIBUTION_THRESHOLD = thres
+        self.accept_thres_k = accept_k
+        self.accept_thres_s = accept_s
 
     def gen_public_key_a(self, a=None):
         if a is None:
@@ -158,13 +160,15 @@ class KEXProtocol(RLWE_KEX):
                 else:
                     print(f"The {i}-index of s_B is confirmed to be negative.")
                     sign_output[i] = 1
-        print(f"Validate sign output: {sign_output}")
 
         # Step 2: Determine j such that s_B[j] = +-1
         ## Assuming j=f, we calculate remained positions of s_B
         stop = False
         j_list = np.array(range(len(sign_output)))[sign_output != -1]
         id = 0
+        best_s = -1
+        best_k = -1
+        count = 0
         while not stop:
             j = j_list[id]
             s_B_iter = Polynomial(s_B_pred.coef)
@@ -203,11 +207,23 @@ class KEXProtocol(RLWE_KEX):
 
             ### After calculating s_B based on this assumption, we use Shapiro-Wilk Test to determine
             ### whether (p_B - a*s_B) follow normal distribution
-            p_value = self.verify_distribution(self.add(p_B, -self.multiply(a, s_B_iter, self.q), self.q).coef)
             if self.n > self.DISTRIBUTION_THRESHOLD:
-                if p_value > 0.05:
-                    stop = True
-                    s_B_pred = s_B_iter
+                k_p_value = self.verify_distribution(self.add(p_B, -self.multiply(a, s_B_iter, self.q), self.q).coef)
+                s_p_value = self.verify_distribution(s_B_iter.coef)
+                print(f'p value of k:\t{k_p_value:11f}')
+                print(f'p value of s_B:\t{s_p_value:11f}')
+                if k_p_value > best_k and s_p_value > best_s:
+                    best_k = k_p_value
+                    best_s = s_p_value
+                    s_B_pred_wise = s_B_iter
+                    count = 1
+                elif abs(k_p_value - best_k) < 1e-6 and abs(s_p_value - best_s) < 1e-6:
+                    count += 1
+
+                if k_p_value > self.accept_thres_k:
+                    if s_p_value > self.accept_thres_s:
+                        stop = True
+                        s_B_pred = s_B_iter
                 elif id == j_list.shape[0]-1:
                     stop = True
                     j = -1
@@ -216,10 +232,17 @@ class KEXProtocol(RLWE_KEX):
                 s_B_pred = s_B_iter
             id += 1
         if j == -1:
-            print("Cannot find j such that s_B[j] = +-1")
+            if count > 1:
+                print(f"Predicted s_B with low-sample distribution: {s_B_pred_wise}") if (self.n > self.DISTRIBUTION_THRESHOLD) else print()
+                print(f"Actual s_B: {s_B}")
+                print(f"p_value of s_B: {self.verify_distribution(s_B.coef)}")
+            else:
+                print(f"Actual s_B: {s_B}")
+                print("Cannot find j such that s_B[j] = +-1")
         else:
             print(f"Predicted s_B: {s_B_pred}") if self.n > self.DISTRIBUTION_THRESHOLD else print()
             print(f"Actual s_B: {s_B}")
+            print(f"p_value of s_B: {self.verify_distribution(s_B.coef)}")
 
     def verify_distribution(self, x):
         return shapiro(x)[1]

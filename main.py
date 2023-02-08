@@ -3,7 +3,7 @@ from numpy.polynomial import Polynomial
 
 
 def main():
-    proto = KEXProtocol(n=8, q=257, sigma=3)
+    proto = KEXProtocol(n=64, q=257, sigma=3, thres=30, accept_k=0.05, accept_s=0.05)
     # proto = KEXProtocol(n=101, q=257)
     a = Polynomial((-15, 69, 33, -57, -3, 87, -105, 7))
     s_B = Polynomial((2, 3, 0, 0, -5, 2, 3, 1))
