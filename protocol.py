@@ -37,7 +37,7 @@ class KEXProtocol(RLWE_KEX):
             self.s_B = s
 
     def key_exchange(self, a=None, s_A=None, e_A=None, g_A=None, s_B=None, e_B=None, g_B=None,
-                     g_A_used=False, g_B_used=False):
+                     g_A_used=False, g_B_used=False, print_result=False):
         # Initialize third party at the beginning of session
         self.invoke_third_party()
 
@@ -83,6 +83,15 @@ class KEXProtocol(RLWE_KEX):
         self.sk_B = self.calc_mod2_reconciliation(k_B, w_A_flip)
         self.third_party.receive_share_key(self.sk_B)
 
+        if print_result:
+            print(f"Secret key s_A: {s_A_}")
+            print(f"Public key a: {a}")
+            print(f"Public key p_A: {self.p_A}")
+            print(f"Secret key s_B: {s_B_}")
+            print(f"Public key p_B: {self.p_B}")
+            print(f"Signal w_A: {w_A}")
+            print(f"Shared key sk_A: {self.sk_A}")
+            print(f"Shared key sk_B: {self.sk_B}")
         return self.third_party.confirm_key_exchange()
 
     def invoke_third_party(self):
