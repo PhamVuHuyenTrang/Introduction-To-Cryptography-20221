@@ -12,7 +12,7 @@ def main(args):
     s_A = Polynomial((0, 0, 0, 0, 0, 0, 0, 0))
     # # Check key exchange protocol
     if args.kex:
-        accept = proto.key_exchange(print_result=True)
+        accept = proto.key_exchange(print_result=args.print_result)
         if args.ende:
             proto.encrypt_decrypt(plain_text="I am human")
         if args.attack:
@@ -29,6 +29,6 @@ if __name__ == "__main__":
     parser.add_argument('--ende', action="store_true", help="Make encryption and decryption")
     parser.add_argument('--attack', action="store_true", help="Open attack on the protocol")
     parser.add_argument('--use_default', action="store_true", help='Present attack on default values');
-
+    parser.add_argument('--print_result', action="store_true", help='Print the result');
     args = parser.parse_args()
     main(args)
