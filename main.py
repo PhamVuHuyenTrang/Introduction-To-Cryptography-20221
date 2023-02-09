@@ -14,7 +14,7 @@ def main(args):
     if args.kex:
         accept = proto.key_exchange(print_result=args.print_result)
         if args.ende:
-            proto.encrypt_decrypt(plain_text="I am human")
+            proto.encrypt_decrypt(plain_text=args.plain_text)
         if args.attack:
             if args.use_default:
                 proto.attack(a, s_B, e_B, custom=True)
@@ -30,5 +30,7 @@ if __name__ == "__main__":
     parser.add_argument('--attack', action="store_true", help="Open attack on the protocol")
     parser.add_argument('--use_default', action="store_true", help='Present attack on default values');
     parser.add_argument('--print_result', action="store_true", help='Print the result');
+    parser.add_argument('--plain_text', type=str, default="Introduction to Cryptography Course 20221", help='Plain text for encryption-decryption');
+
     args = parser.parse_args()
     main(args)
